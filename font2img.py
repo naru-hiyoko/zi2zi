@@ -12,9 +12,18 @@ from PIL import ImageFont
 import json
 import collections
 
-reload(sys)
-sys.setdefaultencoding("utf-8")
 
+if sys.version_info.major >= 3:
+    from importlib import reload;
+    reload(sys)
+    
+else:
+    sys.setdefaultencoding("utf-8")
+    reload(sys)
+    
+
+
+    
 CN_CHARSET = None
 CN_T_CHARSET = None
 JP_CHARSET = None
@@ -67,8 +76,7 @@ def filter_recurring_hash(charset, font, canvas_size, x_offset, y_offset):
     return [rh[0] for rh in recurring_hashes]
 
 
-def font2img(src, dst, charset, char_size, canvas_size,
-             x_offset, y_offset, sample_count, sample_dir, label=0, filter_by_hash=True):
+def font2img(src, dst, charset, char_size, canvas_size, x_offset, y_offset, sample_count, sample_dir, label=0, filter_by_hash=True):
     src_font = ImageFont.truetype(src, size=char_size)
     dst_font = ImageFont.truetype(dst, size=char_size)
 
@@ -78,7 +86,6 @@ def font2img(src, dst, charset, char_size, canvas_size,
         print("filter hashes -> %s" % (",".join([str(h) for h in filter_hashes])))
 
     count = 0
-
     for c in charset:
         if count == sample_count:
             break
@@ -111,8 +118,11 @@ args = parser.parse_args()
 if __name__ == "__main__":
     if args.charset in ['CN', 'JP', 'KR', 'CN_T']:
         charset = locals().get("%s_CHARSET" % args.charset)
-    else:
-        charset = [c for c in open(args.charset).readline()[:-1].decode("utf-8")]
+    if args.charset in ['US']:
+        #charset = [c for c in open(args.charset).readline()[:-1].decode("utf-8")]
+        charset = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
+        'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+        charset = charset + [c.lower() for c in charset]
     if args.shuffle:
         np.random.shuffle(charset)
     font2img(args.src_font, args.dst_font, charset, args.char_size,

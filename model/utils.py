@@ -4,12 +4,15 @@ from __future__ import absolute_import
 
 import os
 import glob
+import sys
 
 import imageio
 import scipy.misc as misc
 import numpy as np
-from cStringIO import StringIO
-
+if sys.version_info.major >= 3:
+    from io import BytesIO as StringIO
+else:
+    from cStringIO import StringIO
 
 def pad_seq(seq, batch_size):
     # pad the sequence to be the multiples of batch_size
